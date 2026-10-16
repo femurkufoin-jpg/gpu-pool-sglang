@@ -1,24 +1,25 @@
-# SGLang Model Gateway project settings
-# Reference configuration for our project.
-# The gateway does not automatically load this YAML file;
-# the Nomad gateway job will pass settings through CLI arguments.
+# SGLang Model Gateway configuration reference.
+# This is documentation for our project; the gateway does not
+# automatically load this YAML file. The Nomad job passes
+# supported settings through command-line arguments.
+
 gateway:
-  name: sglang-model-gateway
+  name: "sglang-model-gateway"
   host: "0.0.0.0"
   port: 30000
-  routing_policy: "cache_aware"
-  request_timeout_seconds: 600
-workers:
-  # Example addresses only. Replace them with the real worker
-  # addresses when the workers are deployed and registered.
-  - name: sglang-worker-1
-    url: "http://127.0.0.1:8000"
-  - name: sglang-worker-2
-    url: "http://127.0.0.1:8001"
-service_discovery:
+  policy: "cache_aware"
+  max_concurrent_requests: 64
+
+worker:
+  service_name: "sglang-worker"
+  port: 8000
+  health_path: "/health"
+
+discovery:
   provider: "consul"
-  enabled: false
-  method: "consul-template"
-  description: >
-    Worker addresses will be obtained from Consul after the
-    discovery approach is implemented and tested.
+  method: "to_be_configured"
+  note: "Worker discovery will be configured and tested when the Nomad environment is available."
+
+testing:
+  gpu_inference: "pending_gpu_access"
+  chat_completion: "pending_gpu_access"

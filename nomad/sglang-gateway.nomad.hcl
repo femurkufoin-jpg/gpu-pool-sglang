@@ -30,7 +30,7 @@ job "sglang-gateway" {
         force_pull = true
         args = [
           "--worker-urls",
-          "http://127.0.0.1:8000",
+          "http://sglang-worker.service.consul:8000",
           "--policy",
           "cache_aware",
           "--host",
