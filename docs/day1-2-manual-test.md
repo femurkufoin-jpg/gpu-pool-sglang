@@ -1,96 +1,45 @@
-Days 1–2: Single SGLang Worker — Manual Test Guide
+Day 1–2: SGLang Worker Preparation and Manual Testing
 
-Objective
+Day 1 — Project Understanding and Setup
 
-Start one SGLang model server on one NVIDIA GPU, confirm that its health endpoint responds, and send a test completion request through its OpenAI-compatible API.
+The project, GPU Pool on Proxmox, Scheduled by Nomad, aims to deploy SGLang inference workers on individual GPUs and route OpenAI-compatible requests through the SGLang Model Gateway. Nomad will manage worker scheduling, while service discovery will support worker registration and gateway routing.
 
-Current preparation status
+The initial repository structure and project configuration files were prepared. The main components include the Nomad worker and gateway job specifications, gateway configuration reference, manual testing documentation, and benchmark tooling.
 
-The local project structure and Nomad job specifications have been prepared. Both Nomad job files passed syntax validation. The actual model server has not yet been tested because SSH/GPU access to the target host is unavailable.
+Day 2 — Worker Configuration and Testing Preparation
 
-Target configuration
+The Nomad worker specification, nomad/sglang-worker.nomad.hcl, was validated successfully using the Nomad CLI. The gateway job specification, nomad/sglang-gateway.nomad.hcl, also passed syntax validation.
 
-* Model: Qwen/Qwen2.5-3B-Instruct
-* Server port: 8000
-* Tensor parallel size: 1
-* Health endpoint: /health
-* Chat completion endpoint: /v1/chat/completions
-* Target environment: GPU host gpu-01
+The validation output warned that the Nomad agent could not be reached. Therefore, the checks confirm configuration syntax only; they do not confirm live deployment, GPU allocation, or driver availability.
 
-Step 1: Check the GPU host
+A benchmark harness was created at benchmarks/benchmark_gateway.py. It sends requests to an OpenAI-compatible chat-completions endpoint and records request outcomes and latency. The unit test tests/test_benchmark_gateway.py was created and passed locally.
 
-When SSH access is granted, connect using the connection details supplied by the mentor or administrator. Do not guess the host address or credentials.
+The benchmark changes were committed as 75f6e8e with the message test: add gateway benchmark harness, pushed to GitHub, and merged into main through Pull Request #2. The merge commit was c960234.
 
-Run:
+Verified Local Results
 
-nvidia-smi
-docker --version
+* Nomad worker job syntax validation: successful.
+* Nomad gateway job syntax validation: successful.
+* Python benchmark script syntax check: successful.
+* Benchmark command-line help: successful.
+* Benchmark unit tests: one test passed.
+* Git changes were pushed and merged into main.
 
-Confirm that the NVIDIA GPU is visible and that Docker is available if using the container-based method.
+Outstanding Manual Tests
 
-Step 2: Start SGLang manually
+The following tests require access to the GPU host and a running Nomad cluster:
 
-On the GPU host, run the following command, provided Docker and NVIDIA Container Toolkit are configured:
+1. Start an SGLang worker using an available GPU.
+2. Check the worker health endpoint.
+3. Send a real inference request and confirm the response.
+4. Record model-loading results and GPU memory usage.
+5. Verify communication between the worker and gateway.
+6. Confirm Nomad scheduling and service registration.
 
-docker run --rm --gpus all \
-  --shm-size 4g \
-  -p 8000:8000 \
-  lmsysorg/sglang:latest \
-  python3 -m sglang.launch_server \
-  --model-path Qwen/Qwen2.5-3B-Instruct \
-  --host 0.0.0.0 \
-  --port 8000 \
-  --tp-size 1
+Access Limitation
 
-Keep the terminal running and watch the startup logs. The server must finish loading the model before API tests are attempted. Adjust shared memory or model settings if the host’s available resources require it.
+SSH access to the GPU host is not currently available. The local environment has no detected NVIDIA GPU, and a running Nomad agent could not be reached during validation. Consequently, live inference and cluster deployment have not been verified.
 
-Step 3: Check server health
+Day 1–2 Outcome
 
-From the GPU host or a machine that can reach port 8000, run:
-
-curl -i http://localhost:8000/health
-
-Expected result: an HTTP success response from the health endpoint. Record the actual status and response.
-
-Step 4: Send a chat completion request
-
-Run this from a terminal that can reach the server:
-
-curl -sS http://localhost:8000/v1/chat/completions \
-  -H "Content-Type: application/json" \
-  -d '{
-    "model": "Qwen/Qwen2.5-3B-Instruct",
-    "messages": [
-      {
-        "role": "user",
-        "content": "Explain what a GPU does in two sentences."
-      }
-    ],
-    "max_tokens": 100,
-    "temperature": 0
-  }'
-
-Expected result: a JSON response containing a generated assistant message. Save the actual response as evidence.
-
-If running the request from another computer, replace localhost with the reachable GPU host address.
-
-Troubleshooting notes
-
-* GPU unavailable: Check nvidia-smi, the NVIDIA driver, and NVIDIA Container Toolkit configuration.
-* Model loading fails: Inspect container logs, available GPU memory, network access to download the model, and the model path.
-* Port already in use: Check whether another process is listening on port 8000 before choosing a different port.
-* Health check fails: Review the SGLang startup logs and confirm the server is ready before retrying.
-* Connection refused: Confirm that the server is running, the port mapping is correct, and the client can reach the host.
-* Out-of-memory error: Review model memory usage, available GPU memory, context length, and server settings before retrying.
-
-Evidence to collect
-
-1. GPU information from nvidia-smi.
-2. SGLang startup logs showing successful model loading.
-3. Health-check response.
-4. Chat completion response.
-5. Any errors encountered and the steps used to resolve them.
-
-Completion criteria
-
-Days 1–2 can be marked fully complete only after the single worker starts successfully and a real chat completion request returns a generated response. Until then, local preparation is complete, but the GPU inference test remains pending.
+Initial project understanding, configuration preparation, local validation, benchmark implementation, and benchmark unit testing have been completed. Actual GPU-worker testing remains pending until access to the required infrastructure is provided.
