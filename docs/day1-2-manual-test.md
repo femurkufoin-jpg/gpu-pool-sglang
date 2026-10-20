@@ -43,3 +43,9 @@ SSH access to the GPU host is not currently available. The local environment has
 Day 1–2 Outcome
 
 Initial project understanding, configuration preparation, local validation, benchmark implementation, and benchmark unit testing have been completed. Actual GPU-worker testing remains pending until access to the required infrastructure is provided.
+
+Additional Local Mock Worker Test
+A local Flask mock worker was started successfully on 127.0.0.1:8000. The /health endpoint returned status: ok. A POST request to /v1/chat/completions also returned a mock chat-completion response using the model local-mock-model.
+These tests confirm that the local mock worker responds to health and chat-completion requests. They do not verify actual SGLang inference or GPU performance.
+Remaining Work
+Live SGLang inference, GPU allocation, gateway-to-worker communication, and Nomad deployment remain pending access to the required GPU host and Nomad infrastructure.
