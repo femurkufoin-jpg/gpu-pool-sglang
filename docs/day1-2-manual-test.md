@@ -48,4 +48,24 @@ Additional Local Mock Worker Test
 A local Flask mock worker was started successfully on 127.0.0.1:8000. The /health endpoint returned status: ok. A POST request to /v1/chat/completions also returned a mock chat-completion response using the model local-mock-model.
 These tests confirm that the local mock worker responds to health and chat-completion requests. They do not verify actual SGLang inference or GPU performance.
 Remaining Work
-Live SGLang inference, GPU allocation, gateway-to-worker communication, and Nomad deployment remain pending access to the required GPU host and Nomad infrastructure.
+Live SGLang inference, GPU allocation, gateway-to-worker communication, and Nomad deployment remain pending access to the required GPU host and Nomad infrastructure.## Additional Local Nomad Mock-Worker Verification — 20 October 2026
+The local Nomad mock worker was deployed using the job specification `nomad/local-mock-worker.nomad.hcl`.
+Verified results:
+- Nomad job status: `running`.
+- Latest deployment: `successful`.
+- Desired allocations: 1.
+- Healthy allocations: 1.
+- Unhealthy allocations: 0.
+- Allocation version 5 was running.
+The mock worker was configured with host networking on port `18000` after earlier attempts using a dynamically assigned port were not reachable from the local Windows environment.
+### Endpoint tests
+1. `GET http://127.0.0.1:18000/health`
+  - Result: HTTP 200.
+  - Response body: `mock-worker-ok`.
+  - Outcome: Passed.
+2. `GET http://127.0.0.1:18000/not-found`
+  - Result: HTTP 404.
+  - Outcome: Passed. The worker correctly rejects an unsupported route.
+### Scope and limitations
+These tests verify that the local mock worker can run as a healthy Nomad allocation and respond correctly to basic HTTP requests. They do not demonstrate SGLang model loading, real inference, GPU allocation, or communication with the actual SGLang Model Gateway.
+Real SGLang inference on `gpu-01`, GPU memory measurements, and deployment on the target Nomad cluster remain outstanding because access to that infrastructure is not currently available.
