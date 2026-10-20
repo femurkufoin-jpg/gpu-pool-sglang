@@ -116,3 +116,37 @@ Deliverables
 * Repeatable benchmark scripts and raw results.
 * A design document covering placement, routing, scaling, failure recovery, and risks.
 * Evidence of successful requests and worker recovery on the GPU cluster.
+
+Local Validation and Testing
+The project has been checked locally on Windows using PowerShell and Visual Studio Code.
+Automated Test
+Run the benchmark test with:
+
+python -m unittest discover -s tests -v
+Verified result: The benchmark test passed (Ran 1 test ... OK).
+Local Mock Worker
+A Flask-based mock worker was tested locally at 127.0.0.1:8000.
+
+GET /health returned an OK status.
+
+POST /v1/chat/completions returned a mock chat-completion response using local-mock-model.
+
+These checks confirm that the mock worker responds to requests. They do not confirm actual SGLang inference or GPU performance.
+Infrastructure Limitations
+The development laptop does not have an available NVIDIA GPU, and the target GPU host and running Nomad agent were not accessible during local validation.
+
+Consequently, the following tasks remain pending:
+
+Running SGLang on the assigned GPU hardware.
+
+Verifying GPU allocation and real model inference.
+
+Testing gateway-to-worker communication and Consul service discovery.
+
+Running performance benchmarks against real workers.
+
+Testing worker failure recovery and the complete cluster deployment.
+Troubleshooting Record
+Local validation was used to make progress while the GPU infrastructure was unavailable. Benchmark tests and the mock worker were checked independently so that local results would not be confused with real GPU inference results.
+
+Additional troubleshooting details and manual test results are recorded in docs/day1-2-manual-test.md.
