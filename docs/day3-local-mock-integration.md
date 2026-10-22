@@ -67,3 +67,15 @@ Automatic Consul-based worker discovery has not been verified. Worker-failure be
 
 Local gateway integration with two mock workers and round-robin request distribution was verified. The next step is to test worker failure and recovery without claiming that mock results represent real GPU inference.
 
+Day 4 — Mock Worker Failure and Recovery
+Objective
+Test whether Nomad restarts a mock worker after its process stops and whether the gateway remains available.
+Results
+Stopped the Python process serving mock Worker 1 on port 18000.
+Confirmed that Nomad restarted the worker. The allocation showed 4 total restarts and the task running again.
+Sent a subsequent chat-completion request through the gateway; the response identified mock-worker-2.
+Checked the gateway health endpoint at http://127.0.0.1:30000/health; it returned OK.
+Limitations
+This verifies basic recovery in the local mock environment. It does not establish zero failed client requests during recovery, automatic Consul-based worker discovery, or real SGLang GPU inference.
+Conclusion
+The local gateway and mock workers demonstrated basic routing and Nomad process-restart behavior. Further testing is required for production failure handling.
