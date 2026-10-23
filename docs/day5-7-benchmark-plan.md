@@ -1,0 +1,61 @@
+Days 5–7: GPU Benchmark Plan
+1. Objective
+Prepare a repeatable procedure to evaluate GPU model placement, deployment architecture, and gateway routing for the GPU pool project. The existing benchmark harness measures request success, throughput, and latency against an OpenAI-compatible chat-completion endpoint.
+Real performance comparisons require access to the target GPU servers and actual SGLang workers. Local mock results are functional test evidence only.
+2. Existing Benchmark Harness
+Script: benchmarks/benchmark_gateway.py
+The script supports:
+Configurable gateway URL and model name
+Configurable prompt and request count
+Concurrency levels of 1, 8, and 32
+Request timeout configuration
+Successful and failed request counts
+Throughput in requests per second
+Mean, p50, p95, and maximum latency
+JSON output for repeatable results
+The existing unit test is tests/test_benchmark_gateway.py.
+3. Experiment A: GPU Model Sizing
+Test candidate models on the available GPUs.
+GPU
+Memory
+Measurements
+RTX 3060
+12 GB
+Model memory, KV-cache capacity, latency, throughput, out-of-memory events
+RTX 3060 Ti
+8 GB
+Model memory, KV-cache capacity, latency, throughput, out-of-memory events
+Evaluate suitable quantized 7B–8B models on 12 GB GPUs, including AWQ or GPTQ where supported. Evaluate smaller embedding models, such as BGE-M3 if compatible with the available memory and runtime, on 8 GB GPUs.
+Record the exact model, quantization, SGLang version, GPU type, memory usage, and whether the model loads successfully. Do not assume that a model fits based only on its parameter count.
+4. Experiment B: Independent Replicas vs Tensor Parallelism
+Compare:
+Two independent model replicas, one per GPU.
+A tensor-parallel deployment using two GPUs, where supported by the model and hardware.
+Run the same model, prompt set, request count, and warm-up procedure at concurrency 1, 8, and 32. Repeat each run and report the median result.
+Record:
+Requests per second
+Mean, p50, and p95 latency
+Successful and failed requests
+GPU memory usage
+GPU utilization
+Model load time
+For tensor parallelism across separate hosts, measure network bandwidth and latency first. The routed link may be unsuitable for the high-volume communication required by distributed inference.
+5. Experiment C: Cache-Aware vs Round-Robin Routing
+Use a consistent system prompt and repeated RAG context to create opportunities for prefix-cache reuse.
+Compare the supported cache-aware routing policy with round-robin routing under the same workload. Record:
+Throughput and latency
+Prefix-cache hit rate, if exposed by the runtime or gateway
+Successful and failed requests
+Worker distribution
+Token counts and workload details
+Confirm the gateway actually supports the selected cache-aware policy before running the comparison. Do not infer cache hits from latency alone.
+6. Result Recording
+Store each run with its date, model, quantization, GPU, architecture, routing policy, concurrency, request count, and raw JSON output.
+Keep mock results separate from real GPU results. The file benchmarks/mock-results.json contains local mock measurements and must not be used as GPU performance evidence.
+7. Current Status
+Benchmark harness implemented and its existing unit test passed.
+Local mock benchmark completed at concurrency 1, 8, and 32, with 8 requests per run and no failed requests.
+Real GPU model sizing and performance comparisons remain pending GPU access.
+Cache-aware routing and distributed tensor-parallel performance remain unverified until tested on the actual deployment.
+8. Completion Criteria
+The benchmark stage is complete when the model-sizing observations are recorded, both deployment architectures are measured under the specified concurrency levels, both routing policies are compared using the same workload, and raw results and conclusions are committed to the repository.
