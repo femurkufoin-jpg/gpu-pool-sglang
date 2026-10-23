@@ -1,0 +1,51 @@
+{
+  "generated_at": "2026-10-23T12:30:27.428773+00:00",
+  "note": "Results are measurements only when the target endpoint is reachable.",
+  "runs": [
+    {
+      "url": "http://127.0.0.1:30000",
+      "model": "mock-model",
+      "concurrency": 1,
+      "requests_requested": 8,
+      "requests_succeeded": 8,
+      "requests_failed": 0,
+      "duration_seconds": 0.3506,
+      "requests_per_second": 22.8164,
+      "latency_mean_seconds": 0.0434,
+      "latency_p50_seconds": 0.0345,
+      "latency_p95_seconds": 0.0887,
+      "latency_max_seconds": 0.0887,
+      "errors": []
+    },
+    {
+      "url": "http://127.0.0.1:30000",
+      "model": "mock-model",
+      "concurrency": 8,
+      "requests_requested": 8,
+      "requests_succeeded": 8,
+      "requests_failed": 0,
+      "duration_seconds": 0.3341,
+      "requests_per_second": 23.9435,
+      "latency_mean_seconds": 0.2899,
+      "latency_p50_seconds": 0.3029,
+      "latency_p95_seconds": 0.3253,
+      "latency_max_seconds": 0.3253,
+      "errors": []
+    },
+    {
+      "url": "http://127.0.0.1:30000",
+      "model": "mock-model",
+      "concurrency": 32,
+      "requests_requested": 8,
+      "requests_succeeded": 8,
+      "requests_failed": 0,
+      "duration_seconds": 0.3001,
+      "requests_per_second": 26.6581,
+      "latency_mean_seconds": 0.2694,
+      "latency_p50_seconds": 0.2647,
+      "latency_p95_seconds": 0.2879,
+      "latency_max_seconds": 0.2879,
+      "errors": []
+    }
+  ]
+}

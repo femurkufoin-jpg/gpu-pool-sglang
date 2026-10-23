@@ -1,0 +1,78 @@
+{
+  "generated_at": "2026-10-23T12:12:22.110741+00:00",
+  "note": "Results are measurements only when the target endpoint is reachable.",
+  "runs": [
+    {
+      "url": "http://127.0.0.1:30000",
+      "model": "mock-model",
+      "concurrency": 1,
+      "requests_requested": 8,
+      "requests_succeeded": 0,
+      "requests_failed": 8,
+      "duration_seconds": 0.2466,
+      "requests_per_second": 0.0,
+      "latency_mean_seconds": null,
+      "latency_p50_seconds": null,
+      "latency_p95_seconds": null,
+      "latency_max_seconds": null,
+      "errors": [
+        "Server disconnected",
+        "Server disconnected",
+        "Server disconnected",
+        "Server disconnected",
+        "Server disconnected",
+        "Server disconnected",
+        "Server disconnected",
+        "Server disconnected"
+      ]
+    },
+    {
+      "url": "http://127.0.0.1:30000",
+      "model": "mock-model",
+      "concurrency": 8,
+      "requests_requested": 8,
+      "requests_succeeded": 0,
+      "requests_failed": 8,
+      "duration_seconds": 0.1046,
+      "requests_per_second": 0.0,
+      "latency_mean_seconds": null,
+      "latency_p50_seconds": null,
+      "latency_p95_seconds": null,
+      "latency_max_seconds": null,
+      "errors": [
+        "Server disconnected",
+        "Server disconnected",
+        "Server disconnected",
+        "Server disconnected",
+        "Server disconnected",
+        "Server disconnected",
+        "Server disconnected",
+        "Server disconnected"
+      ]
+    },
+    {
+      "url": "http://127.0.0.1:30000",
+      "model": "mock-model",
+      "concurrency": 32,
+      "requests_requested": 8,
+      "requests_succeeded": 0,
+      "requests_failed": 8,
+      "duration_seconds": 0.1075,
+      "requests_per_second": 0.0,
+      "latency_mean_seconds": null,
+      "latency_p50_seconds": null,
+      "latency_p95_seconds": null,
+      "latency_max_seconds": null,
+      "errors": [
+        "Server disconnected",
+        "Server disconnected",
+        "Server disconnected",
+        "Server disconnected",
+        "Server disconnected",
+        "Server disconnected",
+        "Server disconnected",
+        "Server disconnected"
+      ]
+    }
+  ]
+}
