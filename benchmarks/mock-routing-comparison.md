@@ -26,3 +26,32 @@ The mock workers do not reproduce GPU inference, SGLang prefix caching, or reali
 - `benchmarks/mock-cache-aware-retry.json`
 ## Outstanding work
 Repeat the comparison on real SGLang workers using the same model, prompt workload, request count, concurrency settings, and warm-up procedure. Record cache-hit metrics if available, repeat each test, and compare the results before recommending a production routing policy.
+## Recovery and Load-Test Findings
+### Recovery benchmark
+The recovery test was saved to `benchmarks/mock-routing-recovery.json`.
+The displayed test results show:
+| Concurrency | Requests requested | Succeeded | Failed |
+|---:|---:|---:|---:|
+| 1 | 20 | 20 | 0 |
+| 8 | 20 | 20 | 0 |
+These results show successful requests at the displayed concurrency levels during this recovery benchmark.
+### High-concurrency observation
+An earlier load test recorded failures at concurrency 32. Gateway logs showed HTTP 503 responses, unavailable-worker errors, and circuit-breaker activity. This indicates that the mock setup did not handle that workload reliably during the observed run.
+The gateway and both mock worker health endpoints subsequently responded successfully:
+- Worker 1: `http://127.0.0.1:18000/health`
+- Worker 2: `http://127.0.0.1:18001/health`
+- Gateway: `http://127.0.0.1:30000/health`
+Gateway metrics recorded both successful and failed upstream outcomes. These are cumulative metrics, so historical failures should not be interpreted as proof that the workers were still failing at the time of the health checks.
+### Raw evidence
+The following JSON files preserve benchmark results:
+- `benchmarks/mock-round-robin-retry.json`
+- `benchmarks/mock-cache-aware-retry.json`
+- `benchmarks/mock-routing-recovery.json`
+### Limitations
+These tests use mock workers, not real SGLang model inference on GPUs. They do not establish real GPU throughput, prefix-cache hit rates, or production-grade failure recovery. The results are local integration evidence only.
+### Next steps
+When GPU workers become available:
+1. Repeat the routing comparison using real SGLang workers.
+2. Use the same model, prompt workload, request count, concurrency settings, and warm-up procedure for both policies.
+3. Record cache-hit metrics if available.
+4. Repeat each test and compare the results before recommending a production routing policy.
