@@ -1,0 +1,45 @@
+{
+  "generated_at": "2026-10-26T15:06:08.003368+00:00",
+  "note": "Measurements describe only the configured endpoint. Mock endpoint results are not GPU performance evidence. Architecture and routing labels are user-supplied metadata.",
+  "configuration": {
+    "url": "http://127.0.0.1:30000",
+    "model": "Qwen/Qwen2.5-3B-Instruct",
+    "requests_per_repetition": 2,
+    "repetitions": 1,
+    "concurrency_levels": [
+      1
+    ],
+    "architecture": "mock",
+    "routing_policy": "cache_aware"
+  },
+  "runs": [
+    {
+      "repetition": 1,
+      "url": "http://127.0.0.1:30000",
+      "model": "Qwen/Qwen2.5-3B-Instruct",
+      "concurrency": 1,
+      "requests_requested": 2,
+      "requests_succeeded": 2,
+      "requests_failed": 0,
+      "duration_seconds": 0.1525,
+      "requests_per_second": 13.1121,
+      "latency_mean_seconds": 0.0753,
+      "latency_p50_seconds": 0.0309,
+      "latency_p95_seconds": 0.1198,
+      "latency_max_seconds": 0.1198,
+      "errors": []
+    }
+  ],
+  "median_summaries": [
+    {
+      "concurrency": 1,
+      "repetitions": 1,
+      "median_requests_per_second": 13.1121,
+      "median_latency_mean_seconds": 0.0753,
+      "median_latency_p50_seconds": 0.0309,
+      "median_latency_p95_seconds": 0.1198,
+      "total_requests_succeeded": 2,
+      "total_requests_failed": 0
+    }
+  ]
+}

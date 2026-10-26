@@ -77,3 +77,27 @@ The repeatability run is recorded in `benchmarks/mock-day6-round-robin-repeatabi
 | 8 | 52.3803 | 0.1469 | 0.2630 | 0 |
 | 32 | 47.9731 | 0.6048 | 1.1631 | 0 |
 The results show successful mock requests in these runs, with increased latency at higher concurrency. They do not prove GPU performance, guarantee future circuit-breaker behavior, or establish a production routing recommendation.
+## Day 6: Cache-Aware Routing Comparison (Mock Only)
+The gateway was configured with `--policy cache_aware`. Its startup log confirmed the active CacheAware policy, and the gateway health endpoint and both mock worker health endpoints responded successfully before the full benchmark.
+Raw results:
+- `benchmarks/mock-day6-cache-aware-smoke.json` — 2-request smoke test
+- `benchmarks/mock-day6-cache-aware-comparison.json` — full comparison workload
+Workload:
+- 100 requests per repetition
+- 2 repetitions per concurrency level
+- Concurrency levels: 1, 8, and 32
+- Total requested: 600
+Results:
+| Concurrency | Requested | Succeeded | Failed | Median throughput (req/s) | Median p95 latency |
+|---:|---:|---:|---:|---:|---:|
+| 1 | 200 | 200 | 0 | 27.1633 | 0.0788 s |
+| 8 | 200 | 200 | 0 | 56.8782 | 0.2520 s |
+| 32 | 200 | 46 | 154 | 10.9342* | 1.0168 s* |
+*At concurrency 32, repetition 1 had 46 successes and 54 failures; repetition 2 had 0 successes and 100 failures. The median throughput and latency are not reliable indicators of stable performance at this load.
+The failures returned HTTP 503 with `no_available_workers` and the message that all circuits were open or unhealthy. This indicates a significant mock-gateway reliability issue at concurrency 32 that requires further investigation.
+Limitations:
+- These are local mock-worker measurements, not real SGLang inference or GPU performance.
+- The RoundRobin repeatability run and CacheAware comparison were not necessarily executed under identical conditions; differences must not be interpreted as a conclusive policy ranking.
+- No cache-hit rate was measured. Latency alone does not establish cache effectiveness.
+- The gateway was subsequently restored to RoundRobin. Its startup log confirmed the RoundRobin policy, and the gateway and both worker health checks passed.
+Conclusion: the cache-aware test succeeded at concurrency 1 and 8 but experienced substantial failures at concurrency 32. A controlled, repeated comparison with identical conditions and cache-hit metrics remains necessary before recommending a production routing policy.
