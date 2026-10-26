@@ -1,0 +1,99 @@
+{
+  "generated_at": "2026-10-26T13:49:11.639613+00:00",
+  "note": "Measurements describe only the configured endpoint. Mock endpoint results are not GPU performance evidence. Architecture and routing labels are user-supplied metadata.",
+  "configuration": {
+    "url": "http://127.0.0.1:30000",
+    "model": "Qwen/Qwen2.5-3B-Instruct",
+    "requests_per_repetition": 100,
+    "repetitions": 1,
+    "concurrency_levels": [
+      1,
+      8,
+      32
+    ],
+    "architecture": "mock-replicas",
+    "routing_policy": "round_robin"
+  },
+  "runs": [
+    {
+      "repetition": 1,
+      "url": "http://127.0.0.1:30000",
+      "model": "Qwen/Qwen2.5-3B-Instruct",
+      "concurrency": 1,
+      "requests_requested": 100,
+      "requests_succeeded": 100,
+      "requests_failed": 0,
+      "duration_seconds": 3.1433,
+      "requests_per_second": 31.8135,
+      "latency_mean_seconds": 0.0313,
+      "latency_p50_seconds": 0.0277,
+      "latency_p95_seconds": 0.046,
+      "latency_max_seconds": 0.1711,
+      "errors": []
+    },
+    {
+      "repetition": 1,
+      "url": "http://127.0.0.1:30000",
+      "model": "Qwen/Qwen2.5-3B-Instruct",
+      "concurrency": 8,
+      "requests_requested": 100,
+      "requests_succeeded": 100,
+      "requests_failed": 0,
+      "duration_seconds": 3.1169,
+      "requests_per_second": 32.0829,
+      "latency_mean_seconds": 0.2382,
+      "latency_p50_seconds": 0.1106,
+      "latency_p95_seconds": 1.0625,
+      "latency_max_seconds": 1.4834,
+      "errors": []
+    },
+    {
+      "repetition": 1,
+      "url": "http://127.0.0.1:30000",
+      "model": "Qwen/Qwen2.5-3B-Instruct",
+      "concurrency": 32,
+      "requests_requested": 100,
+      "requests_succeeded": 100,
+      "requests_failed": 0,
+      "duration_seconds": 2.4935,
+      "requests_per_second": 40.1043,
+      "latency_mean_seconds": 0.7144,
+      "latency_p50_seconds": 0.6833,
+      "latency_p95_seconds": 1.0257,
+      "latency_max_seconds": 1.5372,
+      "errors": []
+    }
+  ],
+  "median_summaries": [
+    {
+      "concurrency": 1,
+      "repetitions": 1,
+      "median_requests_per_second": 31.8135,
+      "median_latency_mean_seconds": 0.0313,
+      "median_latency_p50_seconds": 0.0277,
+      "median_latency_p95_seconds": 0.046,
+      "total_requests_succeeded": 100,
+      "total_requests_failed": 0
+    },
+    {
+      "concurrency": 8,
+      "repetitions": 1,
+      "median_requests_per_second": 32.0829,
+      "median_latency_mean_seconds": 0.2382,
+      "median_latency_p50_seconds": 0.1106,
+      "median_latency_p95_seconds": 1.0625,
+      "total_requests_succeeded": 100,
+      "total_requests_failed": 0
+    },
+    {
+      "concurrency": 32,
+      "repetitions": 1,
+      "median_requests_per_second": 40.1043,
+      "median_latency_mean_seconds": 0.7144,
+      "median_latency_p50_seconds": 0.6833,
+      "median_latency_p95_seconds": 1.0257,
+      "total_requests_succeeded": 100,
+      "total_requests_failed": 0
+    }
+  ]
+}

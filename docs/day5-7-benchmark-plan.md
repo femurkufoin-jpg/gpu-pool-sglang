@@ -1,4 +1,4 @@
-Days 5–7: GPU Benchmark Plan
+Days 5â€“7: GPU Benchmark Plan
 1. Objective
 Prepare a repeatable procedure to evaluate GPU model placement, deployment architecture, and gateway routing for the GPU pool project. The existing benchmark harness measures request success, throughput, and latency against an OpenAI-compatible chat-completion endpoint.
 Real performance comparisons require access to the target GPU servers and actual SGLang workers. Local mock results are functional test evidence only.
@@ -25,7 +25,7 @@ Model memory, KV-cache capacity, latency, throughput, out-of-memory events
 RTX 3060 Ti
 8 GB
 Model memory, KV-cache capacity, latency, throughput, out-of-memory events
-Evaluate suitable quantized 7B–8B models on 12 GB GPUs, including AWQ or GPTQ where supported. Evaluate smaller embedding models, such as BGE-M3 if compatible with the available memory and runtime, on 8 GB GPUs.
+Evaluate suitable quantized 7Bâ€“8B models on 12 GB GPUs, including AWQ or GPTQ where supported. Evaluate smaller embedding models, such as BGE-M3 if compatible with the available memory and runtime, on 8 GB GPUs.
 Record the exact model, quantization, SGLang version, GPU type, memory usage, and whether the model loads successfully. Do not assume that a model fits based only on its parameter count.
 4. Experiment B: Independent Replicas vs Tensor Parallelism
 Compare:
@@ -91,3 +91,30 @@ Verified: both unit tests pass and gateway health returned OK.
 Pending: actual GPU replica and TP=2 benchmarks because the target GPU servers are unavailable.
 Pending: production architecture recommendations based on real GPU measurements.
 Mock results validate the benchmark workflow only. They must not be used to claim that replicas outperform TP=2 or to make a production performance recommendation.
+## 10. Day 6: High-Concurrency RoundRobin Retest
+Purpose
+Investigate the earlier concurrency-32 failures and verify the local mock gateway after correcting the routing-policy mismatch.
+Initial failure
+Raw results: benchmarks/mock-day6-load-test.json
+At concurrency 1, 100/100 requests succeeded.
+At concurrency 8, 100/100 requests succeeded.
+At concurrency 32, 28/100 requests succeeded and 72 failed with HTTP 503 no_available_workers errors. Gateway metrics and logs showed circuit-breaker activity.
+Investigation and correction
+Both Nomad mock workers and the gateway health endpoint subsequently returned healthy responses. Gateway metrics showed both worker circuit breakers had opened during previous traffic. Inspection also established that the running gateway used cache_aware even though the benchmark metadata said round_robin.
+The gateway was recreated using the round_robin policy. Its startup logs confirmed RoundRobin, and the gateway and both worker health checks passed.
+Retest results
+Raw results: benchmarks/mock-day6-round-robin-retest.json
+Requests per concurrency level: 100
+Repetitions: 1
+| Concurrency | Succeeded | Failed | Throughput (req/s) | Mean latency (s) | P95 latency (s) |
+|---:|---:|---:|---:|---:|---:|
+| 1 | 100 | 0 | 31.8135 | 0.0313 | 0.0460 |
+| 8 | 100 | 0 | 32.0829 | 0.2382 | 1.0625 |
+| 32 | 100 | 0 | 40.1043 | 0.7144 | 1.0257 |
+Interpretation
+The retest completed all 300 requests without failures after the gateway was configured for RoundRobin. Mean and tail latency increased under concurrency, so throughput alone should not be treated as the only performance indicator.
+This was one retest repetition, not a statistically robust performance comparison. The earlier failed run is retained and must not be discarded. The result does not prove the underlying circuit-breaker issue can never recur.
+Validation
+The benchmark JSON was confirmed to exist. Both benchmark unit tests passed, and git diff --check reported no whitespace errors.
+Limitations and status
+These results use local mock workers, not actual SGLang inference on GPUs. They do not establish GPU performance, prefix-cache hit rates, or production-grade recovery. Real GPU replica-versus-TP=2 and routing-policy comparisons remain pending GPU access.

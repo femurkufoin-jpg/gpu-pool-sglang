@@ -55,3 +55,9 @@ When GPU workers become available:
 2. Use the same model, prompt workload, request count, concurrency settings, and warm-up procedure for both policies.
 3. Record cache-hit metrics if available.
 4. Repeat each test and compare the results before recommending a production routing policy.
+## Day 6 RoundRobin Retest
+Raw results:
+- `benchmarks/mock-day6-load-test.json` — initial high-concurrency run; concurrency 32 had 72 failures out of 100.
+- `benchmarks/mock-day6-round-robin-retest.json` — retest after recreating the gateway with RoundRobin; all 100 requests succeeded at concurrency 1, 8, and 32.
+The earlier gateway was configured with `cache_aware` while the benchmark metadata said `round_robin`. The gateway was recreated with the correct RoundRobin policy, its startup logs confirmed the policy, and the gateway and both mock worker health checks passed. The retest completed 300/300 requests successfully.
+This is evidence of a successful local mock retest, not proof of real GPU performance or a definitive explanation of every earlier 503. The retest used one repetition; repeat runs are needed for stronger performance conclusions. Both raw result files are intentionally retained.
