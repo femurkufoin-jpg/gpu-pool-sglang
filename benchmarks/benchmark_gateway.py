@@ -60,7 +60,10 @@ def percentile(values, pct):
        return None
    index = max(
        0,
-       min(len(values) - 1, int((pct / 100) * len(values) + 0.999) - 1),
+       min(
+           len(values) - 1,
+           int((pct / 100) * len(values) + 0.999) - 1,
+       ),
    )
    return round(values[index], 4)
 
@@ -95,13 +98,16 @@ async def run_benchmark(args, concurrency, repetition):
        "requests_failed": len(results) - len(successful),
        "duration_seconds": round(duration, 4),
        "requests_per_second": round(len(successful) / duration, 4)
-       if duration else 0,
+       if duration
+       else 0,
        "latency_mean_seconds": round(statistics.mean(latencies), 4)
-       if latencies else None,
+       if latencies
+       else None,
        "latency_p50_seconds": percentile(ordered, 50),
        "latency_p95_seconds": percentile(ordered, 95),
        "latency_max_seconds": round(max(latencies), 4)
-       if latencies else None,
+       if latencies
+       else None,
        "errors": [
            result["error"] for result in results if not result["ok"]
        ][:10],
@@ -118,16 +124,25 @@ def summarize_repetitions(concurrency, runs):
            [run["requests_per_second"] for run in runs]
        ),
        "median_latency_mean_seconds": median_or_none(
-           [run["latency_mean_seconds"] for run in runs
-            if run["latency_mean_seconds"] is not None]
+           [
+               run["latency_mean_seconds"]
+               for run in runs
+               if run["latency_mean_seconds"] is not None
+           ]
        ),
        "median_latency_p50_seconds": median_or_none(
-           [run["latency_p50_seconds"] for run in runs
-            if run["latency_p50_seconds"] is not None]
+           [
+               run["latency_p50_seconds"]
+               for run in runs
+               if run["latency_p50_seconds"] is not None
+           ]
        ),
        "median_latency_p95_seconds": median_or_none(
-           [run["latency_p95_seconds"] for run in runs
-            if run["latency_p95_seconds"] is not None]
+           [
+               run["latency_p95_seconds"]
+               for run in runs
+               if run["latency_p95_seconds"] is not None
+           ]
        ),
        "total_requests_succeeded": sum(
            run["requests_succeeded"] for run in runs
@@ -153,6 +168,16 @@ def main():
    )
    parser.add_argument("--timeout", type=int, default=120)
    parser.add_argument("--repetitions", type=int, default=3)
+   parser.add_argument(
+       "--architecture",
+       default="unspecified",
+       help="Experiment architecture label, e.g. replicas or tp2",
+   )
+   parser.add_argument(
+       "--routing-policy",
+       default="unspecified",
+       help="Experiment routing label, e.g. round_robin or cache_aware",
+   )
    parser.add_argument("--output", default="benchmarks/results.json")
    args = parser.parse_args()
    if (
@@ -189,7 +214,8 @@ def main():
        "generated_at": datetime.now(timezone.utc).isoformat(),
        "note": (
            "Measurements describe only the configured endpoint. "
-           "Mock endpoint results are not GPU performance evidence."
+           "Mock endpoint results are not GPU performance evidence. "
+           "Architecture and routing labels are user-supplied metadata."
        ),
        "configuration": {
            "url": args.url,
@@ -197,6 +223,8 @@ def main():
            "requests_per_repetition": args.requests,
            "repetitions": args.repetitions,
            "concurrency_levels": args.concurrency,
+           "architecture": args.architecture,
+           "routing_policy": args.routing_policy,
        },
        "runs": all_runs,
        "median_summaries": summaries,
