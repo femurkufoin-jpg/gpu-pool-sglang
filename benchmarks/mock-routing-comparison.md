@@ -61,3 +61,11 @@ Raw results:
 - `benchmarks/mock-day6-round-robin-retest.json` — retest after recreating the gateway with RoundRobin; all 100 requests succeeded at concurrency 1, 8, and 32.
 The earlier gateway was configured with `cache_aware` while the benchmark metadata said `round_robin`. The gateway was recreated with the correct RoundRobin policy, its startup logs confirmed the policy, and the gateway and both mock worker health checks passed. The retest completed 300/300 requests successfully.
 This is evidence of a successful local mock retest, not proof of real GPU performance or a definitive explanation of every earlier 503. The retest used one repetition; repeat runs are needed for stronger performance conclusions. Both raw result files are intentionally retained.
+## Day 6 Repeatability Results
+The repeatability run is recorded in `benchmarks/mock-day6-round-robin-repeatability.json`. Two repetitions of 100 requests were run at each concurrency level (1, 8, and 32). All 600 requests succeeded.
+| Concurrency | Median throughput (req/s) | Median mean latency (s) | Median p95 latency (s) | Failed requests |
+|---:|---:|---:|---:|---:|
+| 1 | 17.7861 | 0.0660 | 0.1705 | 0 |
+| 8 | 52.3803 | 0.1469 | 0.2630 | 0 |
+| 32 | 47.9731 | 0.6048 | 1.1631 | 0 |
+The results show successful mock requests in these runs, with increased latency at higher concurrency. They do not prove GPU performance, guarantee future circuit-breaker behavior, or establish a production routing recommendation.

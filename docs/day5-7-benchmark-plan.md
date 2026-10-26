@@ -118,3 +118,23 @@ Validation
 The benchmark JSON was confirmed to exist. Both benchmark unit tests passed, and git diff --check reported no whitespace errors.
 Limitations and status
 These results use local mock workers, not actual SGLang inference on GPUs. They do not establish GPU performance, prefix-cache hit rates, or production-grade recovery. Real GPU replica-versus-TP=2 and routing-policy comparisons remain pending GPU access.
+## Day 6: RoundRobin Repeatability Test
+Raw results: `benchmarks/mock-day6-round-robin-repeatability.json`
+Configuration:
+- Endpoint: `http://127.0.0.1:30000`
+- Model label: `Qwen/Qwen2.5-3B-Instruct`
+- Routing policy: RoundRobin
+- Requests per repetition: 100
+- Repetitions per concurrency level: 2
+- Concurrency levels: 1, 8, and 32
+| Concurrency | Requests succeeded | Requests failed | Median throughput (req/s) | Median mean latency (s) | Median p50 latency (s) | Median p95 latency (s) |
+|---:|---:|---:|---:|---:|---:|---:|
+| 1 | 200/200 | 0 | 17.7861 | 0.0660 | 0.0350 | 0.1705 |
+| 8 | 200/200 | 0 | 52.3803 | 0.1469 | 0.1366 | 0.2630 |
+| 32 | 200/200 | 0 | 47.9731 | 0.6048 | 0.5484 | 1.1631 |
+Interpretation:
+All 600 requests succeeded across the six runs. Throughput and latency varied between repetitions, particularly at concurrency 1. At concurrency 32, median mean latency and p95 latency were higher than at lower concurrency levels. These results are useful for validating the mock benchmark workflow, but they do not establish real GPU performance or prove that RoundRobin is the best production policy.
+Validation:
+The raw JSON was confirmed to exist, all recorded requests succeeded, both benchmark unit tests passed, and `git diff --check` passed.
+Limitations:
+These are local mock-worker measurements. Actual SGLang GPU inference, replica-versus-TP=2 comparison, and real cache-hit measurements remain pending GPU access.

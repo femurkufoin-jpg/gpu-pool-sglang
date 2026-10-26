@@ -1,0 +1,147 @@
+{
+  "generated_at": "2026-10-26T14:23:42.436606+00:00",
+  "note": "Measurements describe only the configured endpoint. Mock endpoint results are not GPU performance evidence. Architecture and routing labels are user-supplied metadata.",
+  "configuration": {
+    "url": "http://127.0.0.1:30000",
+    "model": "Qwen/Qwen2.5-3B-Instruct",
+    "requests_per_repetition": 100,
+    "repetitions": 2,
+    "concurrency_levels": [
+      1,
+      8,
+      32
+    ],
+    "architecture": "mock-replicas",
+    "routing_policy": "round_robin"
+  },
+  "runs": [
+    {
+      "repetition": 1,
+      "url": "http://127.0.0.1:30000",
+      "model": "Qwen/Qwen2.5-3B-Instruct",
+      "concurrency": 1,
+      "requests_requested": 100,
+      "requests_succeeded": 100,
+      "requests_failed": 0,
+      "duration_seconds": 9.1982,
+      "requests_per_second": 10.8716,
+      "latency_mean_seconds": 0.0918,
+      "latency_p50_seconds": 0.0404,
+      "latency_p95_seconds": 0.2507,
+      "latency_max_seconds": 2.3307,
+      "errors": []
+    },
+    {
+      "repetition": 2,
+      "url": "http://127.0.0.1:30000",
+      "model": "Qwen/Qwen2.5-3B-Instruct",
+      "concurrency": 1,
+      "requests_requested": 100,
+      "requests_succeeded": 100,
+      "requests_failed": 0,
+      "duration_seconds": 4.0485,
+      "requests_per_second": 24.7007,
+      "latency_mean_seconds": 0.0403,
+      "latency_p50_seconds": 0.0297,
+      "latency_p95_seconds": 0.0903,
+      "latency_max_seconds": 0.2266,
+      "errors": []
+    },
+    {
+      "repetition": 1,
+      "url": "http://127.0.0.1:30000",
+      "model": "Qwen/Qwen2.5-3B-Instruct",
+      "concurrency": 8,
+      "requests_requested": 100,
+      "requests_succeeded": 100,
+      "requests_failed": 0,
+      "duration_seconds": 1.7549,
+      "requests_per_second": 56.9839,
+      "latency_mean_seconds": 0.138,
+      "latency_p50_seconds": 0.1194,
+      "latency_p95_seconds": 0.28,
+      "latency_max_seconds": 0.3099,
+      "errors": []
+    },
+    {
+      "repetition": 2,
+      "url": "http://127.0.0.1:30000",
+      "model": "Qwen/Qwen2.5-3B-Instruct",
+      "concurrency": 8,
+      "requests_requested": 100,
+      "requests_succeeded": 100,
+      "requests_failed": 0,
+      "duration_seconds": 2.0931,
+      "requests_per_second": 47.7768,
+      "latency_mean_seconds": 0.1558,
+      "latency_p50_seconds": 0.1539,
+      "latency_p95_seconds": 0.246,
+      "latency_max_seconds": 0.3055,
+      "errors": []
+    },
+    {
+      "repetition": 1,
+      "url": "http://127.0.0.1:30000",
+      "model": "Qwen/Qwen2.5-3B-Instruct",
+      "concurrency": 32,
+      "requests_requested": 100,
+      "requests_succeeded": 100,
+      "requests_failed": 0,
+      "duration_seconds": 2.5961,
+      "requests_per_second": 38.5194,
+      "latency_mean_seconds": 0.6959,
+      "latency_p50_seconds": 0.6615,
+      "latency_p95_seconds": 1.243,
+      "latency_max_seconds": 2.5044,
+      "errors": []
+    },
+    {
+      "repetition": 2,
+      "url": "http://127.0.0.1:30000",
+      "model": "Qwen/Qwen2.5-3B-Instruct",
+      "concurrency": 32,
+      "requests_requested": 100,
+      "requests_succeeded": 100,
+      "requests_failed": 0,
+      "duration_seconds": 1.7414,
+      "requests_per_second": 57.4267,
+      "latency_mean_seconds": 0.5138,
+      "latency_p50_seconds": 0.4352,
+      "latency_p95_seconds": 1.0833,
+      "latency_max_seconds": 1.6135,
+      "errors": []
+    }
+  ],
+  "median_summaries": [
+    {
+      "concurrency": 1,
+      "repetitions": 2,
+      "median_requests_per_second": 17.7861,
+      "median_latency_mean_seconds": 0.066,
+      "median_latency_p50_seconds": 0.035,
+      "median_latency_p95_seconds": 0.1705,
+      "total_requests_succeeded": 200,
+      "total_requests_failed": 0
+    },
+    {
+      "concurrency": 8,
+      "repetitions": 2,
+      "median_requests_per_second": 52.3803,
+      "median_latency_mean_seconds": 0.1469,
+      "median_latency_p50_seconds": 0.1366,
+      "median_latency_p95_seconds": 0.263,
+      "total_requests_succeeded": 200,
+      "total_requests_failed": 0
+    },
+    {
+      "concurrency": 32,
+      "repetitions": 2,
+      "median_requests_per_second": 47.9731,
+      "median_latency_mean_seconds": 0.6048,
+      "median_latency_p50_seconds": 0.5484,
+      "median_latency_p95_seconds": 1.1631,
+      "total_requests_succeeded": 200,
+      "total_requests_failed": 0
+    }
+  ]
+}
