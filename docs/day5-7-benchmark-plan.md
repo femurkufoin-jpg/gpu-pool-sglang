@@ -59,3 +59,35 @@ Real GPU model sizing and performance comparisons remain pending GPU access.
 Cache-aware routing and distributed tensor-parallel performance remain unverified until tested on the actual deployment.
 8. Completion Criteria
 The benchmark stage is complete when the model-sizing observations are recorded, both deployment architectures are measured under the specified concurrency levels, both routing policies are compared using the same workload, and raw results and conclusions are committed to the repository.
+9. Day 6: Repeated Mock Benchmark and Architecture Comparison Preparation
+Objective
+Validate the benchmark harness using three repetitions at concurrency 1, 8, and 32, and prepare a fair comparison between independent model replicas and tensor parallelism (TP=2).
+Environment and method
+Gateway: http://127.0.0.1:30000
+Model label: Qwen/Qwen2.5-3B-Instruct
+Architecture label: replicas
+Routing-policy label: round_robin
+Requests per repetition: 8
+Repetitions per concurrency level: 3
+Raw results: benchmarks/mock-day6-replicas.json
+Mock benchmark results
+Concurrency | Median throughput (req/s) | Median mean latency (s) | Median p50 latency (s) | Median p95 latency (s) | Succeeded / Failed
+1 | 24.7105 | 0.0403 | 0.0307 | 0.0825 | 24 / 0
+8 | 33.0988 | 0.1905 | 0.1961 | 0.2327 | 24 / 0
+32 | 40.3392 | 0.1631 | 0.1604 | 0.1904 | 24 / 0
+All 72 requests succeeded across nine repetitions. These measurements are from the local mock gateway and are not real SGLang inference or GPU-performance results.
+Replica versus TP=2 procedure (pending GPU access)
+1. Deploy two independent SGLang workers, with one model replica per suitable GPU, behind the gateway.
+2. Deploy the same model and compatible configuration using tensor parallelism across two GPUs.
+3. Use the same prompt, request count, concurrency levels (1, 8, and 32), warm-up procedure, and repetitions for both architectures.
+4. Record model and quantization, GPU type and memory, model-load time, throughput, mean/p50/p95 latency, request successes and failures, and GPU utilization.
+5. Save raw JSON results and compare medians across repetitions.
+6. If TP spans hosts, measure network bandwidth and latency before drawing conclusions.
+The --architecture and --routing-policy options record experiment labels only. They do not deploy or configure the selected architecture or routing policy.
+Day 6 status
+Completed: repeated local mock-gateway benchmark at concurrency 1, 8, and 32.
+Completed: results saved to benchmarks/mock-day6-replicas.json.
+Verified: both unit tests pass and gateway health returned OK.
+Pending: actual GPU replica and TP=2 benchmarks because the target GPU servers are unavailable.
+Pending: production architecture recommendations based on real GPU measurements.
+Mock results validate the benchmark workflow only. They must not be used to claim that replicas outperform TP=2 or to make a production performance recommendation.
