@@ -64,3 +64,12 @@ The controlled benchmark procedure and acceptance criteria are documented. Actua
 - Test adding and removing a mock worker, then verify the gateway uses the updated list after restart.
 - Verify gateway health and request success after each change.
 **Limitations:** This is a proposed discovery design, not a completed integration. The current local gateway uses explicit mock worker URLs. Production discovery, real SGLang inference, and failure recovery remain pending validation.
+## Local Gateway Routing Validation — 2026-10-27
+**Environment:** Local Nomad mock workers, Consul health registration, and SGLang Model Gateway configured with `round_robin`.
+**Test:** Sent 10 OpenAI-compatible chat-completion requests through `http://127.0.0.1:30000/v1/chat/completions`. The test recorded the worker identity returned by each response.
+**Results:**
+- Successful requests: 10/10 (100%).
+- `mock-worker-1`: 5 requests.
+- `mock-worker-2`: 5 requests.
+- Observed distribution: 50/50 across the two mock workers.
+**Conclusion:** The local gateway successfully routed requests to both registered mock workers, with an even distribution in this test. This validates local routing behavior only; it does not establish automatic Consul discovery, real SGLang inference, GPU performance, or production failure recovery.
