@@ -54,3 +54,13 @@ Real SGLang inference and the comparison of independent replicas against tensor 
 The benchmark script's `--architecture` and `--routing-policy` options record experiment labels. They do not deploy an architecture or change the running gateway policy.
 ## Day 7 outcome
 The controlled benchmark procedure and acceptance criteria are documented. Actual GPU results and a conclusive routing-policy recommendation remain pending the required environment and measurements.
+## Worker Discovery Decision — Proposed
+**Preferred initial approach:** Use Consul as the source of truth for healthy SGLang workers. Render the current worker URL list into the gateway's supported `--worker-urls` configuration and perform a controlled gateway restart when worker membership changes.
+**Why this approach:** The current gateway job passes worker URLs as command-line arguments. The project has not yet verified native Consul watch or automatic worker registration/removal in the selected SGLang Model Gateway version. The rendered-list approach avoids assuming that Consul registration alone updates the gateway's routing pool.
+**Local validation required:**
+- Confirm the selected gateway version and its supported configuration options.
+- Verify that the worker service query returns only healthy, eligible workers.
+- Confirm that the rendered list contains both mock workers and produces valid gateway arguments.
+- Test adding and removing a mock worker, then verify the gateway uses the updated list after restart.
+- Verify gateway health and request success after each change.
+**Limitations:** This is a proposed discovery design, not a completed integration. The current local gateway uses explicit mock worker URLs. Production discovery, real SGLang inference, and failure recovery remain pending validation.
