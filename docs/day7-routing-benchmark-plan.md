@@ -73,3 +73,19 @@ The controlled benchmark procedure and acceptance criteria are documented. Actua
 - `mock-worker-2`: 5 requests.
 - Observed distribution: 50/50 across the two mock workers.
 **Conclusion:** The local gateway successfully routed requests to both registered mock workers, with an even distribution in this test. This validates local routing behavior only; it does not establish automatic Consul discovery, real SGLang inference, GPU performance, or production failure recovery.
+## Local Worker Failure Test — 2026-10-27
+**Environment:** Local Nomad mock workers and SGLang Model Gateway configured with `round_robin`.
+**Procedure:** Stopped the `local-mock-worker` Nomad job, sent 10 chat-completion requests through the gateway, and then resubmitted the worker job.
+**Results:**
+- Gateway requests succeeded: 10/10 (100%).
+- Responses identifying `mock-worker-1`: 5.
+- Responses identifying `mock-worker-2`: 5.
+- Nomad redeployment: successful.
+- Replacement allocation: `991166a2`.
+**Conclusion and limitation:** The gateway returned successful responses during the test, and Nomad successfully redeployed the stopped worker job. However, responses from both workers were still observed while the job was stopped. This test does not establish that the gateway removed the unavailable worker from its routing pool or successfully failed over exclusively to the surviving worker. Dynamic discovery and production failure recovery remain unverified.
+## Outstanding Acceptance Criteria
+- Real GPU inference and independent-replica versus TP=2 benchmarks: pending target GPU access.
+- Real cache-hit-rate measurements: pending target GPU access and a suitable workload.
+- Automatic Consul-based worker discovery and membership updates: not yet validated.
+- Gateway failure recovery with no failed client requests beyond in-flight requests: not yet demonstrated.
+- n8n OpenAI-node integration: pending validation against the target environment.
