@@ -98,3 +98,33 @@ The n8n OpenAI node successfully completes a request through the gateway.
 
 The proposed GPU placement plan for 10â€“12 cards and this design report are prepared for supervisor review.
 Current status: Local mock validation, benchmark preparation, and deployment documentation are complete for the tests recorded so far. Production GPU deployment, performance comparisons, dynamic discovery, reliable failover, and n8n integration remain pending target-environment access and validation.
+Day 8 — Proposed Consul-Based Worker Discovery
+Recommended approach
+Use Consul as the source of truth for worker registration and health. Evaluate a small discovery controller that watches Consul service membership and synchronizes healthy SGLang worker endpoints with the SGLang Model Gateway’s dynamic worker registry.
+Expected behavior
+Discover workers registered as sglang-worker in Consul.
+Include only workers that pass their health checks.
+Add newly registered or rescheduled worker endpoints to the gateway.
+Remove unhealthy, deregistered, or obsolete endpoints.
+Log membership changes and synchronization errors.
+Compatibility and fallback
+The production gateway job currently supplies a static worker URL. Before implementing dynamic synchronization, verify the deployed gateway version’s worker-registration and removal API, including authentication and health-check behavior.
+If the dynamic API is unsuitable, evaluate Consul Template to render a worker list and trigger a controlled gateway restart or reload when membership changes. This fallback must be tested for request disruption and stale-worker handling.
+Validation status
+This is a proposed design, not a completed integration. Local mock validation and production acceptance testing are still required. Verify worker additions, removals, health changes, Nomad rescheduling, and routing across both required gpu-01 workers before claiming discovery is complete.
+## Day 8 — Discovery Investigation Results
+### Verified findings
+- The local Consul container is running.
+- The SGLang Router starts with explicit worker URLs.
+- The installed router's built-in `--service-discovery` option is documented for Kubernetes pod discovery.
+- A source search did not identify obvious worker add/remove functions in the installed Python package.
+### Decision
+Use Consul as the source of truth for Nomad worker registration and health. Implement a small discovery controller only after confirming a supported way to update the gateway's worker list. Do not enable Kubernetes discovery in the Nomad deployment.
+### Implementation and validation still required
+- Confirm a supported gateway worker-update mechanism.
+- Synchronize healthy Consul workers with the gateway.
+- Test worker registration, removal, health changes, and Nomad rescheduling.
+- Verify requests continue routing correctly when one worker becomes unavailable.
+- Validate on the target GPU environment before claiming production acceptance.
+### Day 8 status
+Discovery investigation completed. The integration remains proposed and is not yet implemented or acceptance-tested.
