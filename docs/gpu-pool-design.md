@@ -128,3 +128,11 @@ Use Consul as the source of truth for Nomad worker registration and health. Impl
 - Validate on the target GPU environment before claiming production acceptance.
 ### Day 8 status
 Discovery investigation completed. The integration remains proposed and is not yet implemented or acceptance-tested.
+### Gateway API Verification
+- `GET /workers` returned two registered workers, both reporting `is_healthy: true`.
+- `OPTIONS /workers` returned HTTP 200.
+- `/openapi.json` and `/docs` returned HTTP 404.
+- The OPTIONS response does not confirm whether POST or DELETE is supported. Their request formats and behavior still require verification.
+- No worker was added or removed during these checks.
+### Updated Day 8 Status
+The discovery investigation and documentation are complete. The live worker-list endpoint has been verified. Consul-to-gateway synchronization and reliable failover remain unimplemented and require further testing.
