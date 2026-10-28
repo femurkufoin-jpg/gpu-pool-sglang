@@ -136,3 +136,7 @@ Discovery investigation completed. The integration remains proposed and is not y
 - No worker was added or removed during these checks.
 ### Updated Day 8 Status
 The discovery investigation and documentation are complete. The live worker-list endpoint has been verified. Consul-to-gateway synchronization and reliable failover remain unimplemented and require further testing.
+### Day 9 — Consul-to-Gateway Synchronization
+Created `scripts/consul_gateway_sync.py` to compare registered Consul services with the SGLang Model Gateway worker registry. The script queries registered and passing services, calculates worker additions and removals, and defaults to dry-run mode.
+Python syntax validation passed. The dry run detected both mock workers (`host.docker.internal:18000` and `host.docker.internal:18001`) with no changes required. Consul health checks passed for both workers, and the gateway `/workers` endpoint reported two registered workers marked healthy.
+The gateway `/openapi.json` endpoint returned HTTP 404, while an `OPTIONS` request to `/workers` returned HTTP 200. These results do not prove that worker registration or removal succeeds. No live synchronization changes were applied. Unhealthy-worker removal, automatic recovery, and production GPU inference remain unverified.
