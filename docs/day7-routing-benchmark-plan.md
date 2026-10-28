@@ -89,3 +89,29 @@ The controlled benchmark procedure and acceptance criteria are documented. Actua
 - Automatic Consul-based worker discovery and membership updates: not yet validated.
 - Gateway failure recovery with no failed client requests beyond in-flight requests: not yet demonstrated.
 - n8n OpenAI-node integration: pending validation against the target environment.
+## Day 6 — Cache-Aware Routing Comparison Results
+Environment: Local mock workers and SGLang Model Gateway.
+Raw results: `benchmarks/mock-day6-cache-aware-comparison.json`
+Workload: Two repetitions of 100 requests at concurrency 1, 8, and 32.
+| Concurrency | Successful | Failed | Median throughput (req/s) | Median mean latency (s) | Median p50 (s) | Median p95 (s) |
+|---|---:|---:|---:|---:|---:|---:|
+| 1 | 200/200 | 0 | 27.1633 | 0.0465 | 0.0302 | 0.0788 |
+| 8 | 200/200 | 0 | 56.8782 | 0.1367 | 0.1248 | 0.2520 |
+| 32 | 46/200 | 154 | Incomplete due to failures | Not reliable | Not reliable | Not reliable |
+| **Total** | **446/600** | **154** | — | — | — | — |
+### Interpretation and limitations
+Cache-Aware routing completed all requests at concurrency 1 and 8 in the recorded runs. At concurrency 32, requests failed with HTTP 503 `no_available_workers` errors, and worker circuit breakers became unhealthy or open.
+These results are local mock measurements, not GPU performance evidence. The high-concurrency failures prevent a reliable performance comparison at concurrency 32. The Round Robin and Cache-Aware runs also were not a fully controlled production comparison.
+Real SGLang inference, prefix/KV-cache hit measurements, and a controlled policy comparison remain pending target GPU access.
+## Day 6 — Independent Replicas vs. TP=2: Comparison Status
+The benchmark harness and local mock tests are prepared, but the existing mock results do not establish the performance of real independent SGLang replicas versus tensor parallelism (TP=2).
+| Measurement | Independent replicas | TP=2 |
+|---|---|---|
+| Real GPU throughput | Pending GPU access | Pending GPU access |
+| Mean, p50, and p95 latency | Pending GPU access | Pending GPU access |
+| GPU memory and utilization | Pending GPU access | Pending GPU access |
+| Error rate under concurrency 1, 8, and 32 | Pending GPU access | Pending GPU access |
+| Three comparable repetitions | Pending GPU access | Pending GPU access |
+### Measurement requirements
+Use the same model where feasible, compatible quantization, prompt and context length, generation settings, warm-up procedure, concurrency levels, and number of repetitions. Record the actual GPU placement and configuration for each architecture.
+Do not treat benchmark metadata labels as proof that replicas or TP=2 were deployed. Recommend an architecture only after comparable measurements from the target GPU environment are available.
